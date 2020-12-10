@@ -52,4 +52,14 @@ public class EndpointsController {
         output.append(" = "+sum);
         return output.toString();
     }
+
+    @RequestMapping("/math/volume/{length}/{width}/{height}")
+    public String volume(
+            @PathVariable String length,
+            @PathVariable String width,
+            @PathVariable String height) {
+        int volume = Integer.parseInt(length)*Integer.parseInt(width)*Integer.parseInt(height);
+        return "The volume of a "+length+"x"+width+"x"+height+" rectangle is "+volume;
+    }
+
 }
