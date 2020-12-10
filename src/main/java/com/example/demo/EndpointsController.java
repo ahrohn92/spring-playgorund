@@ -1,8 +1,9 @@
 package com.example.demo;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.text.DecimalFormat;
 import java.util.Map;
 
 @RestController
@@ -62,4 +63,21 @@ public class EndpointsController {
         return "The volume of a "+length+"x"+width+"x"+height+" rectangle is "+volume;
     }
 
+    @PostMapping(value = "/math/area", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String area(@RequestParam Map<String, String> body) {
+        if (body.get("type").equals("circle") && body.containsKey("radius")) {
+            int radius = Integer.parseInt(body.get("radius"));
+            double area = Math.PI * Math.pow(radius, 2);
+            DecimalFormat df = new DecimalFormat("0.#####");
+            return "Area of a circle with a radius of "+radius+" is "+df.format(area);
+        } else if (body.get("type").equals("rectangle") && body.containsKey("width")
+                && body.containsKey("height")) {
+            int width = Integer.parseInt(body.get("width"));
+            int height = Integer.parseInt(body.get("height"));
+            int area = width * height;
+            return "Area of a "+width+"x"+height+" rectangle is "+area;
+        } else {
+            return "Invalid";
+        }
+    }
 }
