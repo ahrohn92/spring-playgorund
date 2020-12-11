@@ -2,15 +2,13 @@ package com.example.demo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.util.Arrays.asList;
+import java.util.Map;
 
 @RestController
 
@@ -23,7 +21,7 @@ public class JSONController {
         Flight flight1 = new Flight();
         flight1.departDate = "2017-04-21 14:34";
         Ticket ticket1 = new Ticket();
-        Person passenger1 = new Person();
+        Passenger passenger1 = new Passenger();
         passenger1.firstName = "Some name";
         passenger1.lastName = "Some other name";
         ticket1.passenger = passenger1;
@@ -36,7 +34,7 @@ public class JSONController {
         Flight flight2 = new Flight();
         flight2.departDate = "2017-04-21 14:34";
         Ticket ticket = new Ticket();
-        Person passenger = new Person();
+        Passenger passenger = new Passenger();
         passenger.firstName = "Some other name";
         passenger.lastName = null;
         ticket.passenger = passenger;
@@ -50,11 +48,11 @@ public class JSONController {
     }
 
     @GetMapping("/flight")
-    public Flight getFLight() {
+    public Flight getFlight() {
         Flight flight = new Flight();
         flight.departDate = "2017-04-21 14:34";
         Ticket ticket = new Ticket();
-        Person passenger = new Person();
+        Passenger passenger = new Passenger();
         passenger.firstName = "Some name";
         passenger.lastName = "Some other name";
         ticket.passenger = passenger;
@@ -63,6 +61,24 @@ public class JSONController {
         tickets.add(ticket);
         flight.tickets = tickets;
         return flight;
+    }
+
+    public static class Person {
+        private String name;
+        private int age;
+
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+        public int getAge() {
+            return age;
+        }
+        public void setAge(int age) {
+            this.age = age;
+        }
     }
 
     public static class Flight {
@@ -87,14 +103,14 @@ public class JSONController {
     }
 
     public static class Ticket {
-        private Person passenger;
+        private Passenger passenger;
         private int price;
 
         @JsonProperty("Passenger")
-        public Person getPassenger() {
+        public Passenger getPassenger() {
             return passenger;
         }
-        public void setPassenger(Person passenger) {
+        public void setPassenger(Passenger passenger) {
             this.passenger = passenger;
         }
         @JsonProperty("Price")
@@ -107,7 +123,7 @@ public class JSONController {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Person {
+    public static class Passenger {
         private String firstName;
         private String lastName;
 
@@ -125,5 +141,16 @@ public class JSONController {
         public void setLastName(String lastName) {
             this.lastName = lastName;
         }
+    }
+
+
+    @PostMapping(value = "/tickets/total", produces=MediaType.APPLICATION_JSON_VALUE)
+    public String getTotal(@RequestBody Map<String, Ticket[]> body) {
+
+        int price1 = body.get("Tickets")[0].getPrice();
+        int price2 = body.get("Tickets")[1].getPrice();
+        int total = price1 + price2;
+
+        return "{\n"+"\"result\": "+total+"\n}";
     }
 }
