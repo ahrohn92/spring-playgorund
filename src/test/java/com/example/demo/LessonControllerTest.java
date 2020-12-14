@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -45,6 +46,28 @@ public class LessonControllerTest {
         this.mvc.perform(request2)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0].id", is(1)));
+    }
 
+    @Test
+    @Transactional
+    @Rollback
+    public void testPatchLesson() throws Exception {
+        MockHttpServletRequestBuilder request1 = post("/lessons")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"SQL\",\n" +
+                        "\"deliveredOn\":\"2017-04-06\"}");
+        this.mvc.perform(request1);
+
+        MockHttpServletRequestBuilder request2 = patch("/lessons/1")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Spring Security\",\n" +
+                        "\"deliveredOn\":\"2017-04-12\"}");
+
+        this.mvc.perform(request2)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.title", is("Spring Security")))
+                .andExpect(jsonPath("$.deliveredOn", is("2017-04-12")));
     }
 }
