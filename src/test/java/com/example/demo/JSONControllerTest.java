@@ -74,7 +74,6 @@ public class JSONControllerTest {
                             "      }\n" +
                             "    ]\n" +
                             "  }");
-
             this.mvc.perform(request)
                     .andExpect(status().isOk())
                     .andExpect(content().string("{\n"+"\"result\": 350\n"+"}"));

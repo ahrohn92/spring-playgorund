@@ -146,11 +146,9 @@ public class JSONController {
 
     @PostMapping(value = "/tickets/total", produces=MediaType.APPLICATION_JSON_VALUE)
     public String getTotal(@RequestBody Map<String, Ticket[]> body) {
-
         int price1 = body.get("Tickets")[0].getPrice();
         int price2 = body.get("Tickets")[1].getPrice();
         int total = price1 + price2;
-
         return "{\n"+"\"result\": "+total+"\n}";
     }
 }
